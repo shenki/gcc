@@ -980,10 +980,10 @@ enum data_align { align_abi, align_opt, align_both };
    cr5 is not supposed to be used.
 
    On System V implementations, r13 is fixed and not available for use.  */
-
+/* TODO Maybe make R2 available on PPE */
 #define FIXED_REGISTERS  \
-  {0, 1, FIXED_R2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FIXED_R13, 0, 0, \
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+  {0, 1, FIXED_R2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, FIXED_R13, 1, 1, \
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, \
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,	   \
@@ -1002,8 +1002,8 @@ enum data_align { align_abi, align_opt, align_both };
    Aside from that, you can include as many other registers as you like.  */
 
 #define CALL_USED_REGISTERS  \
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, FIXED_R13, 0, 0, \
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, FIXED_R13, 1, 1, \
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, \
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1,	   \
@@ -1021,8 +1021,8 @@ enum data_align { align_abi, align_opt, align_both };
    of `CALL_USED_REGISTERS'.  */
 
 #define CALL_REALLY_USED_REGISTERS  \
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, FIXED_R13, 0, 0, \
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, FIXED_R13, 1, 1, \
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, \
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1,	   \
@@ -1098,12 +1098,12 @@ enum data_align { align_abi, align_opt, align_both };
    33,								\
    63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51,		\
    50, 49, 48, 47, 46,						\
-   75, 74, 69, 68, 72, 71, 70,					\
+   68,					\
    MAYBE_R2_AVAILABLE						\
    9, 10, 8, 7, 6, 5, 4,					\
-   3, EARLY_R12 11, 0,						\
-   31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19,		\
-   18, 17, 16, 15, 14, 13, LATE_R12				\
+   3, EARLY_R12 0,						\
+   31, 30, 29, 28, 		\
+   13, LATE_R12				\
    66, 65,							\
    73, 1, MAYBE_R2_FIXED 67, 76,				\
    /* AltiVec registers.  */					\
@@ -1291,7 +1291,7 @@ enum data_align { align_abi, align_opt, align_both };
 #define ARG_POINTER_REGNUM 67
 
 /* Place to put static chain when calling a function that requires it.  */
-#define STATIC_CHAIN_REGNUM 11
+#define STATIC_CHAIN_REGNUM 10
 
 
 /* Define the classes of registers for register constraints in the
