@@ -885,7 +885,7 @@ enum data_align { align_abi, align_opt, align_both };
 
 /* Nonzero if move instructions will actually fail to work
    when given unaligned data.  */
-#define STRICT_ALIGNMENT 0
+#define STRICT_ALIGNMENT 1
 
 /* Define this macro to be the value 1 if unaligned accesses have a cost
    many times greater than aligned accesses, for example if they are
@@ -1021,8 +1021,8 @@ enum data_align { align_abi, align_opt, align_both };
    of `CALL_USED_REGISTERS'.  */
 
 #define CALL_REALLY_USED_REGISTERS  \
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, FIXED_R13, 1, 1, \
-   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, \
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, FIXED_R13, 0, 0, \
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, \
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
    1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1,	   \
@@ -1101,9 +1101,9 @@ enum data_align { align_abi, align_opt, align_both };
    68,					\
    MAYBE_R2_AVAILABLE						\
    9, 10, 8, 7, 6, 5, 4,					\
-   3, EARLY_R12 0,						\
+   3, 0,						\
    31, 30, 29, 28, 		\
-   13, LATE_R12				\
+   13,				\
    66, 65,							\
    73, 1, MAYBE_R2_FIXED 67, 76,				\
    /* AltiVec registers.  */					\
@@ -1386,30 +1386,54 @@ enum reg_class
    This is an initializer for a vector of HARD_REG_SET
    of length N_REG_CLASSES.  */
 
-#define REG_CLASS_CONTENTS						     \
-{									     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00000000 }, /* NO_REGS */	     \
-  { 0xfffffffe, 0x00000000, 0x00000008, 0x00020000 }, /* BASE_REGS */	     \
-  { 0xffffffff, 0x00000000, 0x00000008, 0x00020000 }, /* GENERAL_REGS */     \
-  { 0x00000000, 0xffffffff, 0x00000000, 0x00000000 }, /* FLOAT_REGS */       \
-  { 0x00000000, 0x00000000, 0xffffe000, 0x00001fff }, /* ALTIVEC_REGS */     \
-  { 0x00000000, 0xffffffff, 0xffffe000, 0x00001fff }, /* VSX_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00002000 }, /* VRSAVE_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00004000 }, /* VSCR_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00008000 }, /* SPE_ACC_REGS */     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00010000 }, /* SPEFSCR_REGS */     \
-  { 0x00000000, 0x00000000, 0x00000000, 0x00040000 }, /* SPR_REGS */     \
-  { 0xffffffff, 0xffffffff, 0x00000008, 0x00020000 }, /* NON_SPECIAL_REGS */ \
-  { 0x00000000, 0x00000000, 0x00000002, 0x00000000 }, /* LINK_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000004, 0x00000000 }, /* CTR_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000006, 0x00000000 }, /* LINK_OR_CTR_REGS */ \
-  { 0x00000000, 0x00000000, 0x00000006, 0x00002000 }, /* SPECIAL_REGS */     \
-  { 0xffffffff, 0x00000000, 0x0000000e, 0x00022000 }, /* SPEC_OR_GEN_REGS */ \
-  { 0x00000000, 0x00000000, 0x00000010, 0x00000000 }, /* CR0_REGS */	     \
-  { 0x00000000, 0x00000000, 0x00000ff0, 0x00000000 }, /* CR_REGS */	     \
-  { 0xffffffff, 0x00000000, 0x00000ffe, 0x00020000 }, /* NON_FLOAT_REGS */   \
-  { 0x00000000, 0x00000000, 0x00001000, 0x00000000 }, /* CA_REGS */	     \
-  { 0xffffffff, 0xffffffff, 0xfffffffe, 0x0007ffff }  /* ALL_REGS */	     \
+#define REG_CLASS_CONTENTS						\
+{									\
+  /* NO_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 },	\
+  /* BASE_REGS.  */							\
+  { 0xf00027fe, 0x00000000, 0x00000008, 0x00020000, 0x00000000 },	\
+  /* GENERAL_REGS.  */							\
+  { 0xf00027ff, 0x00000000, 0x00000008, 0x00020000, 0x00000000 },	\
+  /* FLOAT_REGS.  */							\
+  { 0x00000000, 0xffffffff, 0x00000000, 0x00000000, 0x00000000 },	\
+  /* ALTIVEC_REGS.  */							\
+  { 0x00000000, 0x00000000, 0xffffe000, 0x00001fff, 0x00000000 },	\
+  /* VSX_REGS.  */							\
+  { 0x00000000, 0xffffffff, 0xffffe000, 0x00001fff, 0x00000000 },	\
+  /* VRSAVE_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00002000, 0x00000000 },	\
+  /* VSCR_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00004000, 0x00000000 },	\
+  /* SPE_ACC_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00008000, 0x00000000 },	\
+  /* SPEFSCR_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00010000, 0x00000000 },	\
+  /* SPR_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00040000, 0x00000000 },	\
+  /* NON_SPECIAL_REGS.  */						\
+  { 0xffffffff, 0xffffffff, 0x00000008, 0x00020000, 0x00000000 },	\
+  /* LINK_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x00000000 },	\
+  /* CTR_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000004, 0x00000000, 0x00000000 },	\
+  /* LINK_OR_CTR_REGS.  */						\
+  { 0x00000000, 0x00000000, 0x00000006, 0x00000000, 0x00000000 },	\
+  /* SPECIAL_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000006, 0x00002000, 0x00000000 },	\
+  /* SPEC_OR_GEN_REGS.  */						\
+  { 0xffffffff, 0x00000000, 0x0000000e, 0x00022000, 0x00000000 },	\
+  /* CR0_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000010, 0x00000000, 0x00000000 },	\
+  /* CR_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000ff0, 0x00000000, 0x00000000 },	\
+  /* NON_FLOAT_REGS.  */						\
+  { 0xffffffff, 0x00000000, 0x00000ffe, 0x00020000, 0x00000000 },	\
+  /* CA_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00001000, 0x00000000, 0x00000000 },	\
+  /* SPE_HIGH_REGS.  */							\
+  { 0x00000000, 0x00000000, 0x00000000, 0xffe00000, 0x001fffff },	\
+  /* ALL_REGS.  */							\
+  { 0xffffffff, 0xffffffff, 0xfffffffe, 0xffe7ffff, 0x001fffff }	\
 }
 
 /* The same information, inverted:
