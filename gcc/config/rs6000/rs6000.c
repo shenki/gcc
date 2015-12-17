@@ -23188,7 +23188,7 @@ rs6000_emit_prologue (void)
       if ((strategy & SAVE_INLINE_GPRS))
 	{
         // ppe42 - use 64 bit stores  - No evidence that this gained anything
-        if(rs6000_cpu == PROCESSOR_PPE42)
+        if(rs6000_cpu == PROCESSOR_TITAN) // TODO disable for now PROCESSOR_PPE42)
         {
       i = 0;
       if((info->first_gp_reg_save & 0x01) == 1) // odd reg num
@@ -23302,7 +23302,7 @@ rs6000_emit_prologue (void)
       int i;
 
       // ppe42 save using 64-bit stores
-     if(rs6000_cpu == PROCESSOR_PPE42)
+     if(rs6000_cpu == PROCESSOR_TITAN) // TODO disable for now PROCESSOR_PPE42)
      {
       i = 0;
       if((info->first_gp_reg_save & 0x1) == 1) // odd regnum
@@ -24759,7 +24759,7 @@ rs6000_emit_epilogue (int sibcall)
   else
     {
         // ppe42 - use 64 bit loads
-      if(rs6000_cpu == PROCESSOR_PPE42)
+      if(rs6000_cpu == PROCESSOR_TITAN) // TODO turn off PROCESSOR_PPE42)
       {
         i = 0;
         if((info->first_gp_reg_save & 0x1) == 1) // odd reg
